@@ -1,17 +1,20 @@
 package com.github.braully.dws.Controle;
 
 import com.github.braully.dws.modelo.Cliente;
+import com.github.braully.dws.modelo.ClienteDAO;
 import com.github.braully.dws.modelo.Estado;
-import java.util.ArrayList;
-import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ClienteControle {
 
     Cliente cliente;
+
+    @Autowired
+    ClienteDAO clienteDAO;
 
     public Estado[] getListaEstados() {
         return Estado.values();
@@ -37,13 +40,20 @@ public class ClienteControle {
         String mensagem = "Cliente Salvo: " + cliente;
         System.out.println(mensagem);
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(mensagem));
-        clientes.add(cliente);
+        clienteDAO.save(cliente);
         novoCliente();
     }
 
-    List<Cliente> clientes = new ArrayList<>();
+    public Iterable<Cliente> getClientes() {
+        return clienteDAO.findAll();
+    }
 
-    public List<Cliente> getClientes() {
-        return clientes;
+    /* ... */
+    public void excluirCliente(Cliente cliente) {
+        String mensagem = "Cliente excluido: " + cliente;
+        clienteDAO.delete(cliente);
+        System.out.println(mensagem);
+        FacesContext.getCurrentInstance().addMessage(null, 
+                new FacesMessage(mensagem));
     }
 }
