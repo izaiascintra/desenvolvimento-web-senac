@@ -6,9 +6,11 @@ import com.github.braully.dws.modelo.Estado;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope("view")
 public class ClienteControle {
 
     Cliente cliente;
