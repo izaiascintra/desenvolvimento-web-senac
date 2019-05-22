@@ -1,8 +1,12 @@
 package com.github.braully.dws.Controle;
 
+import com.github.braully.dws.modelo.Usuario;
+import com.github.braully.dws.modelo.UsuarioDAO;
+import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
@@ -18,6 +22,12 @@ public class AcessoUsuarioControle {
     String senha;
     Boolean logado = false;
 
+    @RequestMapping(method = RequestMethod.GET, value = "/sair")
+    public String sair(HttpSession session) {
+        session.invalidate();
+        return "redirect:/login.xhtml ";
+    }
+
     public String entrar() {
         if ("123456".equals(senha)) {
             logado = true;
@@ -28,13 +38,6 @@ public class AcessoUsuarioControle {
             FacesContext.getCurrentInstance().addMessage(null, msgJsf);
         }
         return null;
-    }
-
-    @RequestMapping(method = RequestMethod.GET, value = "/sair")
-    public String sair(HttpSession session) {
-        session.invalidate();
-        return "redirect:/login.xhtml";
-
     }
 
     public Boolean getLogado() {
@@ -55,5 +58,38 @@ public class AcessoUsuarioControle {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public AcessoUsuarioControle() {
+        novoUsuario();
+    }
+
+    @Autowired
+    UsuarioDAO usuarioDAO;
+
+    Usuario usuario;
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public void salvarUsuario() {
+        String mensagem = "Usuario Salvo: " + usuario;
+        System.out.println(mensagem);
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(mensagem));
+        usuarioDAO.save(usuario);
+        novoUsuario();
+    }
+
+    public Iterable<Usuario> getUsuarios() {
+        return usuarioDAO.findAll();
+    }
+
+    public void novoUsuario() {
+        this.usuario = new Usuario();
     }
 }
